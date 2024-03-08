@@ -1,6 +1,5 @@
 package com.terraformersmc.modmenu;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -29,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.function.Supplier;
 
 public class ModMenu implements ClientModInitializer {
 	public static final String MOD_ID = "modmenu";
@@ -42,17 +40,19 @@ public class ModMenu implements ClientModInitializer {
 	public static final Map<String, Mod> ROOT_MODS = new HashMap<>();
 	public static final LinkedListMultimap<Mod, Mod> PARENT_MAP = LinkedListMultimap.create();
 
-	private static Map<String, ConfigScreenFactory<?>> configScreenFactories = new HashMap<>();
-	private static List<Map<String, ConfigScreenFactory<?>>> delayedScreenFactoryProviders = new ArrayList<>();
+	private static final Map<String, ConfigScreenFactory<?>> configScreenFactories = new HashMap<>();
+	private static final List<ModMenuApi> apiImplementations = new ArrayList<>();
 
 	private static int cachedDisplayedModCount = -1;
 	public static boolean runningQuilt = FabricLoader.getInstance().isModLoaded("quilt_loader");
 	public static boolean devEnvironment = FabricLoader.getInstance().isDevelopmentEnvironment();
 
 	public static Screen getConfigScreen(String modid, Screen menuScreen) {
-		if(!delayedScreenFactoryProviders.isEmpty()) {
-			delayedScreenFactoryProviders.forEach(map -> map.forEach(configScreenFactories::putIfAbsent));
-			delayedScreenFactoryProviders.clear();
+		for (ModMenuApi api : apiImplementations) {
+			var factoryProviders = api.getProvidedConfigScreenFactories();
+			if (!factoryProviders.isEmpty()) {
+				factoryProviders.forEach(configScreenFactories::putIfAbsent);
+			}
 		}
 		if (ModMenuConfig.HIDDEN_CONFIGS.getValue().contains(modid)) {
 			return null;
@@ -74,7 +74,7 @@ public class ModMenu implements ClientModInitializer {
 			try {
 				ModMenuApi api = entrypoint.getEntrypoint();
 				configScreenFactories.put(modId, api.getModConfigScreenFactory());
-				delayedScreenFactoryProviders.add(api.getProvidedConfigScreenFactories());
+				apiImplementations.add(api);
 				api.attachModpackBadges(modpackMods::add);
 			} catch (Throwable e) {
 				LOGGER.error("Mod {} provides a broken implementation of ModMenuApi", modId, e);
@@ -148,9 +148,9 @@ public class ModMenu implements ClientModInitializer {
 		if (cachedDisplayedModCount == -1) {
 			// listen, if you have >= 2^32 mods then that's on you
 			cachedDisplayedModCount = Math.toIntExact(MODS.values().stream().filter(mod ->
-					(ModMenuConfig.COUNT_CHILDREN.getValue() || mod.getParent() == null) &&
-							(ModMenuConfig.COUNT_LIBRARIES.getValue() || !mod.getBadges().contains(Mod.Badge.LIBRARY)) &&
-							(ModMenuConfig.COUNT_HIDDEN_MODS.getValue() || !mod.isHidden())
+				(ModMenuConfig.COUNT_CHILDREN.getValue() || mod.getParent() == null) &&
+					(ModMenuConfig.COUNT_LIBRARIES.getValue() || !mod.getBadges().contains(Mod.Badge.LIBRARY)) &&
+					(ModMenuConfig.COUNT_HIDDEN_MODS.getValue() || !mod.isHidden())
 			).count());
 		}
 		return NumberFormat.getInstance().format(cachedDisplayedModCount);
