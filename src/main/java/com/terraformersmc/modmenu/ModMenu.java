@@ -6,11 +6,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import com.terraformersmc.modmenu.api.UpdateChecker;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.config.ModMenuConfigManager;
 import com.terraformersmc.modmenu.event.ModMenuEventHandler;
 import com.terraformersmc.modmenu.util.ModMenuScreenTexts;
-import com.terraformersmc.modmenu.util.ModrinthUtil;
+import com.terraformersmc.modmenu.util.UpdateCheckerUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricDummyParentMod;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricMod;
@@ -68,6 +69,7 @@ public class ModMenu implements ClientModInitializer {
 	public void onInitializeClient() {
 		ModMenuConfigManager.initializeConfig();
 		Set<String> modpackMods = new HashSet<>();
+		Map<String, UpdateChecker> updateCheckers = new HashMap<>();
 		FabricLoader.getInstance().getEntrypointContainers("modmenu", ModMenuApi.class).forEach(entrypoint -> {
 			ModMetadata metadata = entrypoint.getProvider().getMetadata();
 			String modId = metadata.getId();
@@ -75,6 +77,7 @@ public class ModMenu implements ClientModInitializer {
 				ModMenuApi api = entrypoint.getEntrypoint();
 				configScreenFactories.put(modId, api.getModConfigScreenFactory());
 				apiImplementations.add(api);
+				updateCheckers.put(modId, api.getUpdateChecker());
 				api.attachModpackBadges(modpackMods::add);
 			} catch (Throwable e) {
 				LOGGER.error("Mod {} provides a broken implementation of ModMenuApi", modId, e);
@@ -91,10 +94,12 @@ public class ModMenu implements ClientModInitializer {
 				mod = new FabricMod(modContainer, modpackMods);
 			}
 
+			mod.setUpdateChecker(updateCheckers.get(mod.getId()));
+
 			MODS.put(mod.getId(), mod);
 		}
 
-		ModrinthUtil.checkForUpdates();
+		UpdateCheckerUtil.checkForUpdates();
 
 		Map<String, Mod> dummyParents = new HashMap<>();
 
@@ -136,7 +141,7 @@ public class ModMenu implements ClientModInitializer {
 				continue;
 			}
 
-			if (mod.getModrinthData() != null || mod.getChildHasUpdate()) {
+			if (mod.hasUpdate() || mod.getChildHasUpdate()) {
 				return true; // At least one currently visible mod has an update
 			}
 		}
