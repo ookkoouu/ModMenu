@@ -67,7 +67,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 	}
 
 	@Override
-	protected int getScrollbarPositionX() {
+	protected int getScrollbarX() {
 		return this.width - 6 + this.getX();
 	}
 
@@ -321,7 +321,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 	}
 
 	public void renderScrollBar(BufferBuilder bufferBuilder, Tessellator tessellator) {
-		int scrollbarStartX = this.getScrollbarPositionX();
+		int scrollbarStartX = this.getScrollbarX();
 		int scrollbarEndX = scrollbarStartX + 6;
 		int maxScroll = this.getMaxScroll();
 		if (maxScroll > 0) {
