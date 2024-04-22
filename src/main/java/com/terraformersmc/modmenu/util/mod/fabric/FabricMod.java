@@ -211,20 +211,35 @@ public class FabricMod implements Mod {
 	}
 
 	@Override
-	public @NotNull List<String> getContributors() {
-		List<String> authors = metadata.getContributors().stream().map(Person::getName).collect(Collectors.toList());
-		if ("minecraft".equals(getId()) && authors.isEmpty()) {
-			return Lists.newArrayList();
+	public @NotNull Map<String, Collection<String>> getContributors() {
+		Map<String, Collection<String>> contributors = new HashMap<>();
+
+		for (var contributor : this.metadata.getContributors()) {
+			contributors.put(contributor.getName(), List.of("Contributor"));
 		}
-		return authors;
+
+		return contributors;
 	}
 
-	@NotNull
-	public List<String> getCredits() {
-		List<String> list = new ArrayList<>();
-		list.addAll(getAuthors());
-		list.addAll(getContributors());
-		return list;
+	@Override
+	public @NotNull SortedMap<String, SortedSet<String>> getCredits() {
+		SortedMap<String, SortedSet<String>> credits = new TreeMap<>();
+
+		var authors = this.getAuthors();
+		var contributors = this.getContributors();
+
+		for (var author : authors) {
+			contributors.put(author, List.of("Author"));
+		}
+
+		for (var contributor : contributors.entrySet()) {
+			for (var role : contributor.getValue()) {
+				credits.computeIfAbsent(role, key -> new TreeSet<>(String.CASE_INSENSITIVE_ORDER));
+				credits.get(role).add(contributor.getKey());
+			}
+		}
+
+		return credits;
 	}
 
 	@Override

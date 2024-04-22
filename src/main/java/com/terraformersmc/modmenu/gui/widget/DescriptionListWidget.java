@@ -22,7 +22,6 @@ import net.minecraft.client.gui.screen.option.CreditsAndAttributionScreen;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -207,7 +206,8 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 							children().add(new MojangCreditsEntry(line));
 						}
 					} else if (!"java".equals(mod.getId())) {
-						List<String> credits = mod.getCredits();
+						var credits = mod.getCredits();
+
 						if (!credits.isEmpty()) {
 							children().add(emptyEntry);
 
@@ -215,11 +215,30 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 								children().add(new DescriptionEntry(line));
 							}
 
-							for (String credit : credits) {
+							var iterator = credits.entrySet().iterator();
+
+							while (iterator.hasNext()) {
 								int indent = 8;
-								for (OrderedText line : textRenderer.wrapLines(Text.literal(credit), wrapWidth - 16)) {
+
+								var role = iterator.next();
+								var roleName = role.getKey();
+
+								for (var line : textRenderer.wrapLines(this.creditsRoleText(roleName), wrapWidth - 16)) {
 									children().add(new DescriptionEntry(line, indent));
 									indent = 16;
+								}
+
+								for (var contributor : role.getValue()) {
+									indent = 16;
+
+									for (var line : textRenderer.wrapLines(Text.literal(contributor), wrapWidth - 24)) {
+										children().add(new DescriptionEntry(line, indent));
+										indent = 24;
+									}
+								}
+
+								if (iterator.hasNext()) {
+									children().add(emptyEntry);
 								}
 							}
 						}
@@ -329,6 +348,18 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 			bufferBuilder.vertex(scrollbarStartX, q, 0.0D).color(192, 192, 192, 255).next();
 			tessellator.draw();
 		}
+	}
+
+	private Text creditsRoleText(String roleName) {
+		// Replace spaces and dashes in role names with underscores if they exist
+		// Notably Quilted Fabric API does this with FabricMC as "Upstream Owner"
+		var translationKey = roleName.replaceAll("[\s-]", "_");
+
+		// Add an s to the default untranslated string if it ends in r since this
+		// Fixes common role names people use in English (e.g. Author -> Authors)
+		var fallback = roleName.endsWith("r") ? roleName + "s" : roleName;
+
+		return Text.translatableWithFallback("modmenu.credits.role." + translationKey, fallback).append(Text.literal(":"));
 	}
 
 	protected class DescriptionEntry extends ElementListWidget.Entry<DescriptionEntry> {

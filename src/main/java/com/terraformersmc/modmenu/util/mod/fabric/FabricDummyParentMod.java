@@ -89,13 +89,13 @@ public class FabricDummyParentMod implements Mod {
 	}
 
 	@Override
-	public @NotNull List<String> getContributors() {
-		return new ArrayList<>();
+	public @NotNull Map<String, Collection<String>> getContributors() {
+		return Map.of();
 	}
 
 	@Override
-	public @NotNull List<String> getCredits() {
-		return new ArrayList<>();
+	public @NotNull SortedMap<String, SortedSet<String>> getCredits() {
+		return new TreeMap<>();
 	}
 
 	@Override
