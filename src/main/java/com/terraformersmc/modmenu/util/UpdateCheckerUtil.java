@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 import com.terraformersmc.modmenu.ModMenu;
+import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.api.UpdateChecker;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.mod.Mod;
@@ -85,7 +86,20 @@ public class UpdateCheckerUtil {
 			.get().getMetadata().getVersion().getFriendlyString().split("\\+", 1); // Strip build metadata for privacy
 		final var modMenuVersion = splitVersion.length > 1 ? splitVersion[1] : splitVersion[0];
 		final var userAgent = "%s/%s (%s/%s%s)".formatted(ModMenu.GITHUB_REF, modMenuVersion, mcVer, primaryLoader, environment);
-		String body = ModMenu.GSON_MINIFIED.toJson(new LatestVersionsFromHashesBody(modHashes.keySet(), loaders, mcVer));
+
+		List<UpdateChannel> updateChannels;
+		UpdateChannel preferredChannel = UpdateChannel.getUserPreference();
+
+		if (preferredChannel == UpdateChannel.RELEASE) {
+			updateChannels = List.of(UpdateChannel.RELEASE);
+		} else if (preferredChannel == UpdateChannel.BETA) {
+			updateChannels = List.of(UpdateChannel.BETA, UpdateChannel.RELEASE);
+		} else {
+			updateChannels = List.of(UpdateChannel.ALPHA, UpdateChannel.BETA, UpdateChannel.RELEASE);
+		}
+
+		String body = ModMenu.GSON_MINIFIED.toJson(new LatestVersionsFromHashesBody(modHashes.keySet(), loaders, mcVer, updateChannels));
+
 		LOGGER.debug("User agent: " + userAgent);
 		LOGGER.debug("Body: " + body);
 		var latestVersionsRequest = HttpRequest.newBuilder()
@@ -109,6 +123,7 @@ public class UpdateCheckerUtil {
 				responseObject.asMap().forEach((lookupHash, versionJson) -> {
 					var versionObj = versionJson.getAsJsonObject();
 					var projectId = versionObj.get("project_id").getAsString();
+					var versionType = versionObj.get("version_type").getAsString();
 					var versionNumber = versionObj.get("version_number").getAsString();
 					var versionId = versionObj.get("id").getAsString();
 					var primaryFile = versionObj.get("files").getAsJsonArray().asList().stream()
@@ -118,19 +133,28 @@ public class UpdateCheckerUtil {
 						return;
 					}
 
+					var updateChannel = UpdateCheckerUtil.getUpdateChannel(versionType);
 					var versionHash = primaryFile.get().getAsJsonObject().get("hashes").getAsJsonObject().get("sha512").getAsString();
 
 					if (!Objects.equals(versionHash, lookupHash)) {
 						// hashes different, there's an update.
 						modHashes.get(lookupHash).forEach(mod -> {
 							LOGGER.info("Update available for '{}@{}', (-> {})", mod.getId(), mod.getVersion(), versionNumber);
-							mod.setUpdateInfo(new ModrinthUpdateInfo(projectId, versionId, versionNumber));
+							mod.setUpdateInfo(new ModrinthUpdateInfo(projectId, versionId, versionNumber, updateChannel));
 						});
 					}
 				});
 			}
 		} catch (IOException | InterruptedException e) {
 			LOGGER.error("Error checking for updates: ", e);
+		}
+	}
+
+	private static UpdateChannel getUpdateChannel(String versionType) {
+		try {
+			return UpdateChannel.valueOf(versionType.toUpperCase(Locale.ROOT));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			return UpdateChannel.RELEASE;
 		}
 	}
 
@@ -150,11 +174,14 @@ public class UpdateCheckerUtil {
 		public Collection<String> loaders;
 		@SerializedName("game_versions")
 		public Collection<String> gameVersions;
+		@SerializedName("version_types")
+		public Collection<String> versionTypes;
 
-		public LatestVersionsFromHashesBody(Collection<String> hashes, Collection<String> loaders, String mcVersion) {
+		public LatestVersionsFromHashesBody(Collection<String> hashes, Collection<String> loaders, String mcVersion, Collection<UpdateChannel> updateChannels) {
 			this.hashes = hashes;
 			this.loaders = loaders;
 			this.gameVersions = Set.of(mcVersion);
+			this.versionTypes = updateChannels.stream().map(value -> value.toString().toLowerCase()).toList();
 		}
 	}
 }

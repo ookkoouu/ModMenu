@@ -1,5 +1,6 @@
 package com.terraformersmc.modmenu.gui;
 
+import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.config.ModMenuConfigManager;
 import net.minecraft.client.MinecraftClient;
@@ -29,6 +30,7 @@ public class ModMenuOptionsScreen extends GameOptionsScreen {
 		this.addSelectableChild(this.list);
 		this.addDrawableChild(
 				ButtonWidget.builder(ScreenTexts.DONE, (button) -> {
+							ModMenu.checkForUpdates();
 							ModMenuConfigManager.save();
 							this.client.setScreen(this.previous);
 						}).position(this.width / 2 - 100, this.height - 27)
