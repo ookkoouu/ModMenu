@@ -82,9 +82,9 @@ public class UpdateCheckerUtil {
 		List<String> loaders = ModMenu.runningQuilt ? List.of("fabric", "quilt") : List.of("fabric");
 
 		String mcVer = SharedConstants.getGameVersion().getName();
-		String[] splitVersion = FabricLoader.getInstance().getModContainer(ModMenu.MOD_ID)
-			.get().getMetadata().getVersion().getFriendlyString().split("\\+", 1); // Strip build metadata for privacy
-		final var modMenuVersion = splitVersion.length > 1 ? splitVersion[1] : splitVersion[0];
+		String version = FabricLoader.getInstance().getModContainer(ModMenu.MOD_ID)
+				.get().getMetadata().getVersion().getFriendlyString();
+		final var modMenuVersion = version.split("\\+", 2)[0]; // Strip build metadata for privacy
 		final var userAgent = "%s/%s (%s/%s%s)".formatted(ModMenu.GITHUB_REF, modMenuVersion, mcVer, primaryLoader, environment);
 
 		List<UpdateChannel> updateChannels;
