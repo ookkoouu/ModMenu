@@ -1,6 +1,5 @@
 package com.terraformersmc.modmenu.api;
 
-import com.google.common.collect.ImmutableMap;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -66,7 +65,17 @@ public interface ModMenuApi {
 	 * @return a map of mod ids to screen factories.
 	 */
 	default Map<String, ConfigScreenFactory<?>> getProvidedConfigScreenFactories() {
-		return ImmutableMap.of();
+		return Map.of();
+	}
+
+	/**
+	 * Used to provide update checkers for other mods. A mod registering its own
+	 * update checker will take priority over any provided ones should both exist.
+	 *
+	 * @return a map of mod ids to update checkers.
+	 */
+	default Map<String, UpdateChecker> getProvidedUpdateCheckers() {
+		return Map.of();
 	}
 
 	/**

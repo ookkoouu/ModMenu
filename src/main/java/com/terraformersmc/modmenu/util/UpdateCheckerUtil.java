@@ -15,12 +15,12 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
@@ -28,7 +28,6 @@ import java.util.*;
 public class UpdateCheckerUtil {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Mod Menu/Update Checker");
 
-	private static final HttpClient client = HttpClient.newHttpClient();
 	private static boolean modrinthApiV2Deprecated = false;
 
 	private static boolean allowsUpdateChecks(Mod mod) {
@@ -48,10 +47,21 @@ public class UpdateCheckerUtil {
 	public static void checkForCustomUpdates() {
 		ModMenu.MODS.values().stream().filter(UpdateCheckerUtil::allowsUpdateChecks).forEach(mod -> {
 			UpdateChecker updateChecker = mod.getUpdateChecker();
+
 			if (updateChecker == null) {
 				return;
 			}
-			UpdateCheckerThread.run(mod, () -> mod.setUpdateInfo(updateChecker.checkForUpdates()));
+
+			UpdateCheckerThread.run(mod, () -> {
+				var update = updateChecker.checkForUpdates();
+
+				if (update == null) {
+					return;
+				}
+
+				mod.setUpdateInfo(update);
+				LOGGER.info("Update available for '{}@{}'", mod.getId(), mod.getVersion());
+			});
 		});
 	}
 
@@ -77,15 +87,8 @@ public class UpdateCheckerUtil {
 			}
 		});
 
-		String environment = ModMenu.devEnvironment ? "/development" : "";
-		String primaryLoader = ModMenu.runningQuilt ? "quilt" : "fabric";
-		List<String> loaders = ModMenu.runningQuilt ? List.of("fabric", "quilt") : List.of("fabric");
-
 		String mcVer = SharedConstants.getGameVersion().getName();
-		String version = FabricLoader.getInstance().getModContainer(ModMenu.MOD_ID)
-				.get().getMetadata().getVersion().getFriendlyString();
-		final var modMenuVersion = version.split("\\+", 2)[0]; // Strip build metadata for privacy
-		final var userAgent = "%s/%s (%s/%s%s)".formatted(ModMenu.GITHUB_REF, modMenuVersion, mcVer, primaryLoader, environment);
+		List<String> loaders = ModMenu.runningQuilt ? List.of("fabric", "quilt") : List.of("fabric");
 
 		List<UpdateChannel> updateChannels;
 		UpdateChannel preferredChannel = UpdateChannel.getUserPreference();
@@ -100,20 +103,17 @@ public class UpdateCheckerUtil {
 
 		String body = ModMenu.GSON_MINIFIED.toJson(new LatestVersionsFromHashesBody(modHashes.keySet(), loaders, mcVer, updateChannels));
 
-		LOGGER.debug("User agent: " + userAgent);
-		LOGGER.debug("Body: " + body);
+		LOGGER.debug("Body: {}", body);
 		var latestVersionsRequest = HttpRequest.newBuilder()
 			.POST(HttpRequest.BodyPublishers.ofString(body))
-			.header("User-Agent", userAgent)
 			.header("Content-Type", "application/json")
-			.uri(URI.create("https://api.modrinth.com/v2/version_files/update"))
-			.build();
+			.uri(URI.create("https://api.modrinth.com/v2/version_files/update"));
 
 		try {
-			var latestVersionsResponse = client.send(latestVersionsRequest, HttpResponse.BodyHandlers.ofString());
+			var latestVersionsResponse = HttpUtil.request(latestVersionsRequest, HttpResponse.BodyHandlers.ofString());
 
 			int status = latestVersionsResponse.statusCode();
-			LOGGER.debug("Status: " + status);
+			LOGGER.debug("Status: {}", status);
 			if (status == 410) {
 				modrinthApiV2Deprecated = true;
 				LOGGER.warn("Modrinth API v2 is deprecated, unable to check for mod updates.");
