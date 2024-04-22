@@ -1,16 +1,14 @@
 package com.terraformersmc.modmenu.util.mod;
 
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
+import com.terraformersmc.modmenu.api.UpdateChecker;
+import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricIconHandler;
-import net.fabricmc.loader.api.metadata.ModOrigin;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.loader.api.QuiltLoader;
 
 import java.io.IOException;
 import java.util.*;
@@ -70,11 +68,17 @@ public interface Mod {
 	@NotNull
 	List<String> getAuthors();
 
+	/**
+	 * @return a mapping of contributors to their roles.
+	 */
 	@NotNull
-	List<String> getContributors();
+	Map<String, Collection<String>> getContributors();
 
+	/**
+	 * @return a mapping of roles to each contributor with that role.
+	 */
 	@NotNull
-	List<String> getCredits();
+	SortedMap<String, SortedSet<String>> getCredits();
 
 	@NotNull
 	Set<Badge> getBadges();
@@ -99,16 +103,30 @@ public interface Mod {
 
 	boolean isReal();
 
-	@Nullable
-	ModrinthData getModrinthData();
-
 	boolean allowsUpdateChecks();
+
+	@Nullable
+	UpdateChecker getUpdateChecker();
+
+	void setUpdateChecker(@Nullable UpdateChecker updateChecker);
+
+	@Nullable
+	UpdateInfo getUpdateInfo();
+
+	void setUpdateInfo(@Nullable UpdateInfo updateInfo);
+
+	default boolean hasUpdate() {
+		UpdateInfo updateInfo = getUpdateInfo();
+		if (updateInfo == null) {
+			return false;
+		}
+
+		return updateInfo.isUpdateAvailable() && updateInfo.getUpdateChannel().compareTo(ModMenuConfig.UPDATE_CHANNEL.getValue()) >= 0;
+	}
 
 	default @Nullable String getSha512Hash() throws IOException {
 		return null;
 	}
-
-	void setModrinthData(ModrinthData modrinthData);
 
 	void setChildHasUpdate();
 

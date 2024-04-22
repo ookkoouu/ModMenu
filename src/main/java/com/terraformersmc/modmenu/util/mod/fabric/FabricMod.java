@@ -5,11 +5,12 @@ import com.google.common.collect.Sets;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import com.terraformersmc.modmenu.ModMenu;
+import com.terraformersmc.modmenu.api.UpdateChecker;
+import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.OptionalUtil;
 import com.terraformersmc.modmenu.util.VersionUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
-import com.terraformersmc.modmenu.util.mod.ModrinthData;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.*;
@@ -37,7 +38,8 @@ public class FabricMod implements Mod {
 
 	protected final Map<String, String> links = new HashMap<>();
 
-	protected @Nullable ModrinthData modrinthData = null;
+	protected @Nullable UpdateChecker updateChecker = null;
+	protected @Nullable UpdateInfo updateInfo = null;
 
 	protected boolean defaultIconWarning = true;
 
@@ -49,7 +51,7 @@ public class FabricMod implements Mod {
 		this.container = modContainer;
 		this.metadata = modContainer.getMetadata();
 
-		if ("minecraft".equals(metadata.getId()) || "fabricloader".equals(metadata.getId()) || "java".equals(metadata.getId()) || "quilt_loader".equals(metadata.getId())) {
+		if ("minecraft".equals(metadata.getId()) || "java".equals(metadata.getId())) {
 			allowsUpdateChecks = false;
 		}
 
@@ -209,20 +211,35 @@ public class FabricMod implements Mod {
 	}
 
 	@Override
-	public @NotNull List<String> getContributors() {
-		List<String> authors = metadata.getContributors().stream().map(Person::getName).collect(Collectors.toList());
-		if ("minecraft".equals(getId()) && authors.isEmpty()) {
-			return Lists.newArrayList();
+	public @NotNull Map<String, Collection<String>> getContributors() {
+		Map<String, Collection<String>> contributors = new HashMap<>();
+
+		for (var contributor : this.metadata.getContributors()) {
+			contributors.put(contributor.getName(), List.of("Contributor"));
 		}
-		return authors;
+
+		return contributors;
 	}
 
-	@NotNull
-	public List<String> getCredits() {
-		List<String> list = new ArrayList<>();
-		list.addAll(getAuthors());
-		list.addAll(getContributors());
-		return list;
+	@Override
+	public @NotNull SortedMap<String, SortedSet<String>> getCredits() {
+		SortedMap<String, SortedSet<String>> credits = new TreeMap<>();
+
+		var authors = this.getAuthors();
+		var contributors = this.getContributors();
+
+		for (var author : authors) {
+			contributors.put(author, List.of("Author"));
+		}
+
+		for (var contributor : contributors.entrySet()) {
+			for (var role : contributor.getValue()) {
+				credits.computeIfAbsent(role, key -> new TreeSet<>(String.CASE_INSENSITIVE_ORDER));
+				credits.get(role).add(contributor.getKey());
+			}
+		}
+
+		return credits;
 	}
 
 	@Override
@@ -277,20 +294,34 @@ public class FabricMod implements Mod {
 	}
 
 	@Override
-	public @Nullable ModrinthData getModrinthData() {
-		return this.modrinthData;
-	}
-
-	@Override
 	public boolean allowsUpdateChecks() {
-		return this.allowsUpdateChecks || ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(this.getId());
+		if (ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(this.getId())) {
+			return false;
+		}
+
+		return this.allowsUpdateChecks;
 	}
 
 	@Override
-	public void setModrinthData(ModrinthData modrinthData) {
-		this.modrinthData = modrinthData;
+	public @Nullable UpdateChecker getUpdateChecker() {
+		return updateChecker;
+	}
+
+	@Override
+	public void setUpdateChecker(@Nullable UpdateChecker updateChecker) {
+		this.updateChecker = updateChecker;
+	}
+
+	@Override
+	public @Nullable UpdateInfo getUpdateInfo() {
+		return updateInfo;
+	}
+
+	@Override
+	public void setUpdateInfo(@Nullable UpdateInfo updateInfo) {
+		this.updateInfo = updateInfo;
 		String parent = getParent();
-		if (parent != null && modrinthData != null) {
+		if (parent != null && updateInfo != null && updateInfo.isUpdateAvailable()) {
 			ModMenu.MODS.get(parent).setChildHasUpdate();
 		}
 	}

@@ -1,14 +1,13 @@
 package com.terraformersmc.modmenu.gui;
 
+import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.config.ModMenuConfigManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.OptionListWidget;
-import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 
 public class ModMenuOptionsScreen extends GameOptionsScreen {
@@ -42,5 +41,6 @@ public class ModMenuOptionsScreen extends GameOptionsScreen {
 	@Override
 	public void removed() {
 		ModMenuConfigManager.save();
+		ModMenu.checkForUpdates();
 	}
 }
