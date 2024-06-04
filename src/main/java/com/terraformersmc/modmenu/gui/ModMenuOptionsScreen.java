@@ -21,9 +21,14 @@ public class ModMenuOptionsScreen extends GameOptionsScreen {
 
 	@Override
 	protected void init() {
-		this.list = this.addDrawableChild(new OptionListWidget(this.client, this.width, this.height, this));
+		this.list = this.addDrawableChild(new OptionListWidget(this.client, this.width, this));
 		this.list.addAll(ModMenuConfig.asOptions());
 		super.init();
+	}
+
+	@Override
+	protected void addOptions() {
+		// NO-OP
 	}
 
 	@Override
