@@ -163,8 +163,17 @@ public interface Mod {
 			return this.fillColor;
 		}
 
-		public static Set<Badge> convert(Set<String> badgeKeys) {
-			return badgeKeys.stream().map(KEY_MAP::get).collect(Collectors.toSet());
+		public static Set<Badge> convert(Set<String> badgeKeys, String modId) {
+			return badgeKeys.stream()
+					.map(key -> {
+						if (!KEY_MAP.containsKey(key)) {
+							ModMenu.LOGGER.warn("Skipping unknown badge key '{}' specified by mod '{}'", key, modId);
+						}
+
+						return KEY_MAP.get(key);
+					})
+					.filter(Objects::nonNull)
+					.collect(Collectors.toSet());
 		}
 
 		static {
