@@ -9,7 +9,6 @@ import com.terraformersmc.modmenu.api.UpdateChecker;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.ModrinthUpdateInfo;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.toast.SystemToast;
@@ -88,7 +87,7 @@ public class UpdateCheckerUtil {
 		});
 
 		String mcVer = SharedConstants.getGameVersion().getName();
-		List<String> loaders = ModMenu.runningQuilt ? List.of("fabric", "quilt") : List.of("fabric");
+		List<String> loaders = ModMenu.RUNNING_QUILT ? List.of("fabric", "quilt") : List.of("fabric");
 
 		List<UpdateChannel> updateChannels;
 		UpdateChannel preferredChannel = UpdateChannel.getUserPreference();
