@@ -39,9 +39,10 @@ public class ModMenu implements ClientModInitializer {
 	public static final Gson GSON_MINIFIED;
 
 	static {
-		GsonBuilder builder = new GsonBuilder()
-				.registerTypeHierarchyAdapter(Enum.class, new EnumToLowerCaseJsonConverter())
-				.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+		GsonBuilder builder = new GsonBuilder().registerTypeHierarchyAdapter(Enum.class,
+				new EnumToLowerCaseJsonConverter()
+			)
+			.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
 		GSON = builder.setPrettyPrinting().create();
 		GSON_MINIFIED = builder.create();
 	}
@@ -191,11 +192,7 @@ public class ModMenu implements ClientModInitializer {
 				if (!includeLibraries && isLibrary) {
 					return false;
 				}
-				if (!includeHidden && mod.isHidden()) {
-					return false;
-				}
-
-				return true;
+				return includeHidden || !mod.isHidden();
 			}).count());
 		}
 		return NumberFormat.getInstance().format(cachedDisplayedModCount);
@@ -204,10 +201,12 @@ public class ModMenu implements ClientModInitializer {
 	public static Text createModsButtonText(boolean title) {
 		var titleStyle = ModMenuConfig.MODS_BUTTON_STYLE.getValue();
 		var gameMenuStyle = ModMenuConfig.GAME_MENU_BUTTON_STYLE.getValue();
-		var isIcon = title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.ICON : gameMenuStyle ==
-				ModMenuConfig.GameMenuButtonStyle.ICON;
-		var isShort = title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.SHRINK : gameMenuStyle ==
-				ModMenuConfig.GameMenuButtonStyle.REPLACE_BUGS;
+		var isIcon = title ?
+			titleStyle == ModMenuConfig.TitleMenuButtonStyle.ICON :
+			gameMenuStyle == ModMenuConfig.GameMenuButtonStyle.ICON;
+		var isShort = title ?
+			titleStyle == ModMenuConfig.TitleMenuButtonStyle.SHRINK :
+			gameMenuStyle == ModMenuConfig.GameMenuButtonStyle.REPLACE_BUGS;
 		MutableText modsText = ModMenuScreenTexts.TITLE.copy();
 		if (ModMenuConfig.MOD_COUNT_LOCATION.getValue().isOnModsButton() && !isIcon) {
 			String count = ModMenu.getDisplayedModCount();

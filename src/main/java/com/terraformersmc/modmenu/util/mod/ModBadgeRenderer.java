@@ -1,16 +1,11 @@
 package com.terraformersmc.modmenu.util.mod;
 
-import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.util.DrawingUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
 import java.util.Set;
 
 public class ModBadgeRenderer {
@@ -36,10 +31,23 @@ public class ModBadgeRenderer {
 	}
 
 	public void drawBadge(DrawContext DrawContext, Mod.Badge badge, int mouseX, int mouseY) {
-		this.drawBadge(DrawContext, badge.getText().asOrderedText(), badge.getOutlineColor(), badge.getFillColor(), mouseX, mouseY);
+		this.drawBadge(DrawContext,
+			badge.getText().asOrderedText(),
+			badge.getOutlineColor(),
+			badge.getFillColor(),
+			mouseX,
+			mouseY
+		);
 	}
 
-	public void drawBadge(DrawContext DrawContext, OrderedText text, int outlineColor, int fillColor, int mouseX, int mouseY) {
+	public void drawBadge(
+		DrawContext DrawContext,
+		OrderedText text,
+		int outlineColor,
+		int fillColor,
+		int mouseX,
+		int mouseY
+	) {
 		int width = client.textRenderer.getWidth(text) + 6;
 		if (badgeX + width < badgeMax) {
 			DrawingUtil.drawBadge(DrawContext, badgeX, badgeY, width, text, outlineColor, fillColor, 0xCACACA);

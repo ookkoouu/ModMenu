@@ -15,16 +15,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class QuiltMod extends FabricMod {
@@ -43,9 +34,16 @@ public class QuiltMod extends FabricMod {
 
 	@Override
 	public @NotNull List<String> getAuthors() {
-		List<String> authors = metadata.contributors().stream().filter(contributor -> contributor.role().equals("Author") || contributor.role().equals("Owner")).map(ModContributor::name).collect(Collectors.toList());
+		List<String> authors = metadata.contributors()
+			.stream()
+			.filter(contributor -> contributor.role().equals("Author") || contributor.role().equals("Owner"))
+			.map(ModContributor::name)
+			.collect(Collectors.toList());
 		if (authors.isEmpty()) {
-			metadata.contributors().stream().findFirst().ifPresent(modContributor -> authors.add(modContributor.name()));
+			metadata.contributors()
+				.stream()
+				.findFirst()
+				.ifPresent(modContributor -> authors.add(modContributor.name()));
 		}
 		if (authors.isEmpty()) {
 			if ("minecraft".equals(getId())) {
@@ -89,16 +87,21 @@ public class QuiltMod extends FabricMod {
 		var fabricResult = super.getSha512Hash();
 		if (fabricResult == null) {
 			UpdateCheckerUtil.LOGGER.debug("Checking {}", getId());
-			if (container.getSourceType().equals(ModContainer.BasicSourceType.NORMAL_QUILT) || container.getSourceType().equals(ModContainer.BasicSourceType.NORMAL_FABRIC)) {
+			if (container.getSourceType().equals(ModContainer.BasicSourceType.NORMAL_QUILT) || container.getSourceType()
+				.equals(ModContainer.BasicSourceType.NORMAL_FABRIC)) {
 				for (var paths : container.getSourcePaths()) {
-					List<Path> jars = paths.stream().filter(p -> p.toString().toLowerCase(Locale.ROOT).endsWith(".jar")).toList();
+					List<Path> jars = paths.stream()
+						.filter(p -> p.toString().toLowerCase(Locale.ROOT).endsWith(".jar"))
+						.toList();
 
 					if (jars.size() == 1 && jars.get(0).getFileSystem() == FileSystems.getDefault()) {
 						var path = jars.get(0);
 
 						if (Files.exists(path)) {
 							UpdateCheckerUtil.LOGGER.debug("Found {} hash", getId());
-							return com.google.common.io.Files.asByteSource(path.toFile()).hash(Hashing.sha512()).toString();
+							return com.google.common.io.Files.asByteSource(path.toFile())
+								.hash(Hashing.sha512())
+								.toString();
 						}
 					}
 				}

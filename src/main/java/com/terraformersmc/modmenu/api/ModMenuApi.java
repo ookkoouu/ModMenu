@@ -86,6 +86,5 @@ public interface ModMenuApi {
 	 * provided by a modpack.
 	 */
 	default void attachModpackBadges(Consumer<String> consumer) {
-		return;
 	}
 }

@@ -18,9 +18,11 @@ public final class EnumToLowerCaseJsonConverter implements JsonSerializer<Enum<?
 	}
 
 	@Override
-	public Enum<?> deserialize(final JsonElement json,
-							   final Type type,
-							   final JsonDeserializationContext context) throws JsonParseException {
+	public Enum<?> deserialize(
+		final JsonElement json,
+		final Type type,
+		final JsonDeserializationContext context
+	) throws JsonParseException {
 		if (json == null || json.isJsonNull()) {
 			return null;
 		}

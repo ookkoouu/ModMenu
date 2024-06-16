@@ -1,14 +1,5 @@
 package com.terraformersmc.modmenu.util.mod.fabric;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.gson.JsonParser;
 import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.api.UpdateChecker;
@@ -16,12 +7,19 @@ import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.util.HttpUtil;
 import com.terraformersmc.modmenu.util.JsonUtil;
 import com.terraformersmc.modmenu.util.OptionalUtil;
-
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public class FabricLoaderUpdateChecker implements UpdateChecker {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Mod Menu/Fabric Update Checker");

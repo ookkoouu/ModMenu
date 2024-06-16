@@ -19,7 +19,6 @@ public final class ModMenuScreenTexts {
 	public static final Text WEBSITE = Text.translatable("modmenu.website");
 
 	private ModMenuScreenTexts() {
-		return;
 	}
 
 	public static Text modIdTooltip(String modId) {

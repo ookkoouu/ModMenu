@@ -9,7 +9,9 @@ import com.terraformersmc.modmenu.config.option.EnumConfigOption;
 import com.terraformersmc.modmenu.config.option.StringSetConfigOption;
 import net.fabricmc.loader.api.FabricLoader;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -51,16 +53,24 @@ public class ModMenuConfigManager {
 							JsonArray jsonArray = json.getAsJsonArray(field.getName().toLowerCase(Locale.ROOT));
 							if (jsonArray != null) {
 								StringSetConfigOption option = (StringSetConfigOption) field.get(null);
-								ConfigOptionStorage.setStringSet(option.getKey(), Sets.newHashSet(jsonArray).stream().map(JsonElement::getAsString).collect(Collectors.toSet()));
+								ConfigOptionStorage.setStringSet(
+									option.getKey(),
+									Sets.newHashSet(jsonArray)
+										.stream()
+										.map(JsonElement::getAsString)
+										.collect(Collectors.toSet())
+								);
 							}
 						} else if (BooleanConfigOption.class.isAssignableFrom(field.getType())) {
-							JsonPrimitive jsonPrimitive = json.getAsJsonPrimitive(field.getName().toLowerCase(Locale.ROOT));
+							JsonPrimitive jsonPrimitive = json.getAsJsonPrimitive(field.getName()
+								.toLowerCase(Locale.ROOT));
 							if (jsonPrimitive != null && jsonPrimitive.isBoolean()) {
 								BooleanConfigOption option = (BooleanConfigOption) field.get(null);
 								ConfigOptionStorage.setBoolean(option.getKey(), jsonPrimitive.getAsBoolean());
 							}
 						} else if (EnumConfigOption.class.isAssignableFrom(field.getType()) && field.getGenericType() instanceof ParameterizedType) {
-							JsonPrimitive jsonPrimitive = json.getAsJsonPrimitive(field.getName().toLowerCase(Locale.ROOT));
+							JsonPrimitive jsonPrimitive = json.getAsJsonPrimitive(field.getName()
+								.toLowerCase(Locale.ROOT));
 							if (jsonPrimitive != null && jsonPrimitive.isString()) {
 								Type generic = ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
 								if (generic instanceof Class<?>) {
@@ -99,7 +109,9 @@ public class ModMenuConfigManager {
 				if (Modifier.isStatic(field.getModifiers()) && Modifier.isFinal(field.getModifiers())) {
 					if (BooleanConfigOption.class.isAssignableFrom(field.getType())) {
 						BooleanConfigOption option = (BooleanConfigOption) field.get(null);
-						config.addProperty(field.getName().toLowerCase(Locale.ROOT), ConfigOptionStorage.getBoolean(option.getKey()));
+						config.addProperty(field.getName().toLowerCase(Locale.ROOT),
+							ConfigOptionStorage.getBoolean(option.getKey())
+						);
 					} else if (StringSetConfigOption.class.isAssignableFrom(field.getType())) {
 						StringSetConfigOption option = (StringSetConfigOption) field.get(null);
 						JsonArray array = new JsonArray();
@@ -109,7 +121,11 @@ public class ModMenuConfigManager {
 						Type generic = ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
 						if (generic instanceof Class<?>) {
 							EnumConfigOption<?> option = (EnumConfigOption<?>) field.get(null);
-							config.addProperty(field.getName().toLowerCase(Locale.ROOT), ConfigOptionStorage.getEnumTypeless(option.getKey(), (Class<Enum<?>>) generic).name().toLowerCase(Locale.ROOT));
+							config.addProperty(field.getName().toLowerCase(Locale.ROOT),
+								ConfigOptionStorage.getEnumTypeless(option.getKey(), (Class<Enum<?>>) generic)
+									.name()
+									.toLowerCase(Locale.ROOT)
+							);
 						}
 					}
 				}

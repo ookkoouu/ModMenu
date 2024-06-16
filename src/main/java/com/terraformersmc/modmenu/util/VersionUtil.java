@@ -5,7 +5,7 @@ import java.util.List;
 public final class VersionUtil {
 	private static final List<String> PREFIXES = List.of("version", "ver", "v");
 
-	private VersionUtil() {}
+	private VersionUtil() { }
 
 	public static String stripPrefix(String version) {
 		version = version.trim();

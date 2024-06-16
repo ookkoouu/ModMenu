@@ -21,11 +21,13 @@ public class ModSearch {
 			return candidates;
 		}
 		return candidates.stream()
-				.map(modContainer -> new Pair<>(modContainer, passesFilters(screen, modContainer, query.toLowerCase(Locale.ROOT))))
-				.filter(pair -> pair.getRight() > 0)
-				.sorted((a, b) -> b.getRight() - a.getRight())
-				.map(Pair::getLeft)
-				.collect(Collectors.toList());
+			.map(modContainer -> new Pair<>(modContainer,
+				passesFilters(screen, modContainer, query.toLowerCase(Locale.ROOT))
+			))
+			.filter(pair -> pair.getRight() > 0)
+			.sorted((a, b) -> b.getRight() - a.getRight())
+			.map(Pair::getLeft)
+			.collect(Collectors.toList());
 	}
 
 	private static int passesFilters(ModsScreen screen, Mod mod, String query) {
@@ -50,22 +52,25 @@ public class ModSearch {
 
 		// Some basic search, could do with something more advanced but this will do for now
 		if (modName.toLowerCase(Locale.ROOT).contains(query) // Search default mod name
-				|| modTranslatedName.toLowerCase(Locale.ROOT).contains(query) // Search localized mod name
-				|| modId.toLowerCase(Locale.ROOT).contains(query) // Search mod ID
+			|| modTranslatedName.toLowerCase(Locale.ROOT).contains(query) // Search localized mod name
+			|| modId.toLowerCase(Locale.ROOT).contains(query) // Search mod ID
 		) {
 			return query.length() >= 3 ? 2 : 1;
 		}
 
 		if (modDescription.toLowerCase(Locale.ROOT).contains(query) // Search default mod description
-				|| modSummary.toLowerCase(Locale.ROOT).contains(query) // Search mod summary
-				|| authorMatches(mod, query) // Search via author
-				|| library.contains(query) && mod.getBadges().contains(Mod.Badge.LIBRARY) // Search for lib mods
-				|| patchwork.contains(query) && mod.getBadges().contains(Mod.Badge.PATCHWORK_FORGE) // Search for patchwork mods
-				|| modpack.contains(query) && mod.getBadges().contains(Mod.Badge.MODPACK) // Search for modpack mods
-				|| deprecated.contains(query) && mod.getBadges().contains(Mod.Badge.DEPRECATED) // Search for deprecated mods
-				|| clientside.contains(query) && mod.getBadges().contains(Mod.Badge.CLIENT) // Search for clientside mods
-				|| configurable.contains(query) && screen.getModHasConfigScreen().get(modId) // Search for mods that can be configured
-				|| hasUpdate.contains(query) && mod.hasUpdate() // Search for mods that have updates
+			|| modSummary.toLowerCase(Locale.ROOT).contains(query) // Search mod summary
+			|| authorMatches(mod, query) // Search via author
+			|| library.contains(query) && mod.getBadges().contains(Mod.Badge.LIBRARY) // Search for lib mods
+			|| patchwork.contains(query) && mod.getBadges()
+			.contains(Mod.Badge.PATCHWORK_FORGE) // Search for patchwork mods
+			|| modpack.contains(query) && mod.getBadges().contains(Mod.Badge.MODPACK) // Search for modpack mods
+			|| deprecated.contains(query) && mod.getBadges()
+			.contains(Mod.Badge.DEPRECATED) // Search for deprecated mods
+			|| clientside.contains(query) && mod.getBadges().contains(Mod.Badge.CLIENT) // Search for clientside mods
+			|| configurable.contains(query) && screen.getModHasConfigScreen()
+			.get(modId) // Search for mods that can be configured
+			|| hasUpdate.contains(query) && mod.hasUpdate() // Search for mods that have updates
 		) {
 			return 1;
 		}
@@ -84,9 +89,10 @@ public class ModSearch {
 	}
 
 	private static boolean authorMatches(Mod mod, String query) {
-		return mod.getAuthors().stream()
-				.map(s -> s.toLowerCase(Locale.ROOT))
-				.anyMatch(s -> s.contains(query.toLowerCase(Locale.ROOT)));
+		return mod.getAuthors()
+			.stream()
+			.map(s -> s.toLowerCase(Locale.ROOT))
+			.anyMatch(s -> s.contains(query.toLowerCase(Locale.ROOT)));
 	}
 
 }

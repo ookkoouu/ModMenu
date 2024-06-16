@@ -37,8 +37,9 @@ public interface Mod {
 	@NotNull
 	default String getSummary() {
 		String string = getTranslatedSummary();
-		return ModMenu.TEXT_PLACEHOLDER_COMPAT ? TextPlaceholderApiCompat.PARSER.parseText(string, ParserContext.of())
-			.getString() : string;
+		return ModMenu.TEXT_PLACEHOLDER_COMPAT ?
+			TextPlaceholderApiCompat.PARSER.parseText(string, ParserContext.of()).getString() :
+			string;
 	}
 
 	@NotNull
@@ -65,8 +66,9 @@ public interface Mod {
 
 	default Text getFormattedDescription() {
 		String string = getTranslatedDescription();
-		return ModMenu.TEXT_PLACEHOLDER_COMPAT ? TextPlaceholderApiCompat.PARSER.parseText(string,
-			ParserContext.of()) : Text.literal(string);
+		return ModMenu.TEXT_PLACEHOLDER_COMPAT ?
+			TextPlaceholderApiCompat.PARSER.parseText(string, ParserContext.of()) :
+			Text.literal(string);
 	}
 
 	@NotNull String getVersion();
@@ -132,12 +134,20 @@ public interface Mod {
 	boolean isHidden();
 
 	enum Badge {
-		LIBRARY("modmenu.badge.library", 0xff107454, 0xff093929, "library"),
-		CLIENT("modmenu.badge.clientsideOnly", 0xff2b4b7c, 0xff0e2a55, null),
-		DEPRECATED("modmenu.badge.deprecated", 0xff841426, 0xff530C17, "deprecated"),
-		PATCHWORK_FORGE("modmenu.badge.forge", 0xff1f2d42, 0xff101721, null),
-		MODPACK("modmenu.badge.modpack", 0xff7a2b7c, 0xff510d54, null),
-		MINECRAFT("modmenu.badge.minecraft", 0xff6f6c6a, 0xff31302f, null);
+		LIBRARY("modmenu.badge.library", 0xff107454, 0xff093929, "library"), CLIENT("modmenu.badge.clientsideOnly",
+			0xff2b4b7c,
+			0xff0e2a55,
+			null
+		), DEPRECATED("modmenu.badge.deprecated", 0xff841426, 0xff530C17, "deprecated"), PATCHWORK_FORGE(
+			"modmenu.badge.forge",
+			0xff1f2d42,
+			0xff101721,
+			null
+		), MODPACK("modmenu.badge.modpack", 0xff7a2b7c, 0xff510d54, null), MINECRAFT("modmenu.badge.minecraft",
+			0xff6f6c6a,
+			0xff31302f,
+			null
+		);
 
 		private final Text text;
 		private final int outlineColor, fillColor;
@@ -164,16 +174,13 @@ public interface Mod {
 		}
 
 		public static Set<Badge> convert(Set<String> badgeKeys, String modId) {
-			return badgeKeys.stream()
-					.map(key -> {
-						if (!KEY_MAP.containsKey(key)) {
-							ModMenu.LOGGER.warn("Skipping unknown badge key '{}' specified by mod '{}'", key, modId);
-						}
+			return badgeKeys.stream().map(key -> {
+				if (!KEY_MAP.containsKey(key)) {
+					ModMenu.LOGGER.warn("Skipping unknown badge key '{}' specified by mod '{}'", key, modId);
+				}
 
-						return KEY_MAP.get(key);
-					})
-					.filter(Objects::nonNull)
-					.collect(Collectors.toSet());
+				return KEY_MAP.get(key);
+			}).filter(Objects::nonNull).collect(Collectors.toSet());
 		}
 
 		static {

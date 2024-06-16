@@ -7,8 +7,10 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.*;
+import net.minecraft.text.OrderedText;
+import net.minecraft.text.StringVisitable;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Language;
 import net.minecraft.util.math.MathHelper;
 
@@ -19,7 +21,14 @@ import java.util.Random;
 public class DrawingUtil {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 
-	public static void drawRandomVersionBackground(Mod mod, DrawContext DrawContext, int x, int y, int width, int height) {
+	public static void drawRandomVersionBackground(
+		Mod mod,
+		DrawContext DrawContext,
+		int x,
+		int y,
+		int width,
+		int height
+	) {
 		int seed = mod.getName().hashCode() + mod.getVersion().hashCode();
 		Random random = new Random(seed);
 		int color = 0xFF000000 | MathHelper.hsvToRgb(random.nextFloat(1f), random.nextFloat(0.7f, 0.8f), 0.9f);
@@ -30,11 +39,20 @@ public class DrawingUtil {
 		DrawContext.fill(x, y, x + width, y + height, color);
 	}
 
-	public static void drawWrappedString(DrawContext DrawContext, String string, int x, int y, int wrapWidth, int lines, int color) {
+	public static void drawWrappedString(
+		DrawContext DrawContext,
+		String string,
+		int x,
+		int y,
+		int wrapWidth,
+		int lines,
+		int color
+	) {
 		while (string != null && string.endsWith("\n")) {
 			string = string.substring(0, string.length() - 1);
 		}
-		List<StringVisitable> strings = CLIENT.textRenderer.getTextHandler().wrapLines(Text.literal(string), wrapWidth, Style.EMPTY);
+		List<StringVisitable> strings = CLIENT.textRenderer.getTextHandler()
+			.wrapLines(Text.literal(string), wrapWidth, Style.EMPTY);
 		for (int i = 0; i < strings.size(); i++) {
 			if (i >= lines) {
 				break;
@@ -53,12 +71,32 @@ public class DrawingUtil {
 		}
 	}
 
-	public static void drawBadge(DrawContext DrawContext, int x, int y, int tagWidth, OrderedText text, int outlineColor, int fillColor, int textColor) {
+	public static void drawBadge(
+		DrawContext DrawContext,
+		int x,
+		int y,
+		int tagWidth,
+		OrderedText text,
+		int outlineColor,
+		int fillColor,
+		int textColor
+	) {
 		DrawContext.fill(x + 1, y - 1, x + tagWidth, y, outlineColor);
 		DrawContext.fill(x, y, x + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
-		DrawContext.fill(x + 1, y + 1 + CLIENT.textRenderer.fontHeight - 1, x + tagWidth, y + CLIENT.textRenderer.fontHeight + 1, outlineColor);
-		DrawContext.fill( x + tagWidth, y, x + tagWidth + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
-		DrawContext.fill( x + 1, y, x + tagWidth, y + CLIENT.textRenderer.fontHeight, fillColor);
-		DrawContext.drawText(CLIENT.textRenderer, text, (int) (x + 1 + (tagWidth - CLIENT.textRenderer.getWidth(text)) / (float) 2), y + 1, textColor, false);
+		DrawContext.fill(x + 1,
+			y + 1 + CLIENT.textRenderer.fontHeight - 1,
+			x + tagWidth,
+			y + CLIENT.textRenderer.fontHeight + 1,
+			outlineColor
+		);
+		DrawContext.fill(x + tagWidth, y, x + tagWidth + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
+		DrawContext.fill(x + 1, y, x + tagWidth, y + CLIENT.textRenderer.fontHeight, fillColor);
+		DrawContext.drawText(CLIENT.textRenderer,
+			text,
+			(int) (x + 1 + (tagWidth - CLIENT.textRenderer.getWidth(text)) / (float) 2),
+			y + 1,
+			textColor,
+			false
+		);
 	}
 }

@@ -1,12 +1,13 @@
 package com.terraformersmc.modmenu.util;
 
-import java.util.Optional;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import java.util.Optional;
+
 public class JsonUtil {
-	private JsonUtil() {}
+	private JsonUtil() {
+	}
 
 	public static Optional<String> getString(JsonObject parent, String field) {
 		if (!parent.has(field)) {
@@ -15,7 +16,7 @@ public class JsonUtil {
 
 		var value = parent.get(field);
 
-		if (!value.isJsonPrimitive() || !((JsonPrimitive)value).isString()) {
+		if (!value.isJsonPrimitive() || !((JsonPrimitive) value).isString()) {
 			return Optional.empty();
 		}
 
@@ -29,7 +30,7 @@ public class JsonUtil {
 
 		var value = parent.get(field);
 
-		if (!value.isJsonPrimitive() || !((JsonPrimitive)value).isBoolean()) {
+		if (!value.isJsonPrimitive() || !((JsonPrimitive) value).isBoolean()) {
 			return Optional.empty();
 		}
 

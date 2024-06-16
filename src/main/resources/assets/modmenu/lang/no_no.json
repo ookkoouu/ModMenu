@@ -2,9 +2,9 @@
   "category.modmenu.name": "Mod Menu",
   "key.modmenu.open_menu": "Åpne moddmeny",
   "modmenu.title": "Modifikasjoner",
-"modmenu.nameTranslation.modmenu": "Modifikasjonsmeny",
+  "modmenu.nameTranslation.modmenu": "Modifikasjonsmeny",
   "modmenu.descriptionTranslation.modmenu": "Legger til en meny for modifikasjoner, for å vise en liste over modder du har installert.",
-
+  
   "modmenu.loaded": "(%s Lastet)",
   "modmenu.loaded.short": "(%s)",
   "modmenu.loaded.69.secret": "(%s Lastet...nice)",
@@ -13,7 +13,7 @@
   "modmenu.mods.1": " (%s Mod)",
   "modmenu.mods.69.secret": " (%s Modder...nice)",
   "modmenu.mods.420.secret": " (%s Modder...blaze it)",
-
+  
   "modmenu.search": "Søk etter modder",
   "modmenu.searchTerms.library": "api bibliotek",
   "modmenu.searchTerms.patchwork": "patchwork forge fml",
@@ -22,7 +22,7 @@
   "modmenu.searchTerms.clientside": "clientside gameside",
   "modmenu.searchTerms.configurable": "configurations configs configures configurable options",
   "modmenu.searchTerms.hasUpdate": "oppdateringer versjon",
-
+  
   "modmenu.toggleFilterOptions": "Veksle filteralternativer",
   "modmenu.showingMods.n": "Viser %s modder",
   "modmenu.showingMods.1": "Viser %s mod",
@@ -32,20 +32,20 @@
   "modmenu.showingModsLibraries.n.1": "Viser %s modder og %s bibliotek",
   "modmenu.showingModsLibraries.1.n": "Viser %s mod og %s biblioteker",
   "modmenu.showingModsLibraries.1.1": "Viser %s mod og %s bibliotek",
-
+  
   "modmenu.badge.library": "Bibliotek",
   "modmenu.badge.clientsideOnly": "Klient",
   "modmenu.badge.deprecated": "Foreldet",
   "modmenu.badge.forge": "Forge",
   "modmenu.badge.modpack": "Modpakke",
   "modmenu.badge.minecraft": "Minecraft",
-
+  
   "modmenu.dropInfo.line1": "Dra og slipp filer i dette vinduet",
   "modmenu.dropInfo.line2": "for å legge til modifikasjoner",
   "modmenu.dropConfirm": "Vil du kopiere de følgende moddene til modsmappen?",
   "modmenu.dropSuccessful.line1": "Klarte å kopiere modder",
   "modmenu.dropSuccessful.line2": "Restart spillet for å laste inn modder",
-
+  
   "modmenu.modIdToolTip": "Mod ID: %s",
   "modmenu.authorPrefix": "Av %s",
   "modmenu.config": "Endre konfigurasjon",
@@ -53,7 +53,7 @@
   "modmenu.configure.error": "Kunne ikke laste inn konfigurasjonsskjermen for '%s'\nRapporter til '%s', ingen mod-meny",
   "modmenu.website": "Nettsted",
   "modmenu.issues": "Problemer",
-
+  
   "modmenu.credits": "Medvirkende:",
   "modmenu.viewCredits": "Vis medvirkende",
   "modmenu.license": "Lisens:",
@@ -63,7 +63,7 @@
   "modmenu.experimental": "(Mod-menyens oppdaterings-sjekker er eksperimentell!)",
   "modmenu.childHasUpdate": "Et barn av denne modden har en oppdatering tilgjengelig.",
   "modmenu.updateText": "v%s på %s",
-
+  
   "modmenu.buymeacoffee": "Buy Me a Coffee",
   "modmenu.coindrop": "Coindrop",
   "modmenu.crowdin": "Crowdin",
@@ -85,16 +85,16 @@
   "modmenu.twitter": "Twitter",
   "modmenu.wiki": "Wiki",
   "modmenu.youtube": "YouTube",
-
+  
   "modmenu.modsFolder": "Åpne mappe for modder",
   "modmenu.configsFolder": "Åpne mappe for konfigurasjonsfiler",
-
+  
   "modmenu.nameTranslation.minecraft": "Minecraft",
   "modmenu.descriptionTranslation.minecraft": "Grunnspillet.",
   "modmenu.nameTranslation.java": "Java",
   "modmenu.descriptionTranslation.java": "Java runtime miljøet.",
   "modmenu.javaDistributionName": "Kjører: %s",
-
+  
   "modmenu.options": "Instillinger for modmeny",
   "option.modmenu.sorting": "Sorter",
   "option.modmenu.sorting.ascending": "A-Z",

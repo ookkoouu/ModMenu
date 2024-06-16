@@ -16,7 +16,20 @@ public class LegacyTexturedButtonWidget extends TexturedButtonWidget {
 	private final int textureWidth;
 	private final int textureHeight;
 
-	public LegacyTexturedButtonWidget(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier texture, int textureWidth, int textureHeight, ButtonWidget.PressAction pressAction, Text message) {
+	public LegacyTexturedButtonWidget(
+		int x,
+		int y,
+		int width,
+		int height,
+		int u,
+		int v,
+		int hoveredVOffset,
+		Identifier texture,
+		int textureWidth,
+		int textureHeight,
+		ButtonWidget.PressAction pressAction,
+		Text message
+	) {
 		super(x, y, width, height, null, pressAction, message);
 
 		this.u = u;
@@ -39,7 +52,16 @@ public class LegacyTexturedButtonWidget extends TexturedButtonWidget {
 			v += this.hoveredVOffset;
 		}
 
-		context.drawTexture(this.texture, this.getX(), this.getY(), this.u, v, this.width, this.height, this.textureWidth, this.textureHeight);
+		context.drawTexture(this.texture,
+			this.getX(),
+			this.getY(),
+			this.u,
+			v,
+			this.width,
+			this.height,
+			this.textureWidth,
+			this.textureHeight
+		);
 	}
 
 	public static Builder legacyTexturedBuilder(Text message, ButtonWidget.PressAction onPress) {
@@ -103,7 +125,19 @@ public class LegacyTexturedButtonWidget extends TexturedButtonWidget {
 		}
 
 		public LegacyTexturedButtonWidget build() {
-			return new LegacyTexturedButtonWidget(this.x, this.y, this.width, this.height, this.u, this.v, this.hoveredVOffset, this.texture, this.textureWidth, this.textureHeight, this.onPress, this.message);
+			return new LegacyTexturedButtonWidget(this.x,
+				this.y,
+				this.width,
+				this.height,
+				this.u,
+				this.v,
+				this.hoveredVOffset,
+				this.texture,
+				this.textureWidth,
+				this.textureHeight,
+				this.onPress,
+				this.message
+			);
 		}
 	}
 }

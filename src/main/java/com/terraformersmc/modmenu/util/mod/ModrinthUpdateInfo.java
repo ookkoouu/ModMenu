@@ -1,12 +1,10 @@
 package com.terraformersmc.modmenu.util.mod;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.util.VersionUtil;
-
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 
 public class ModrinthUpdateInfo implements UpdateInfo {
 	protected final String projectId;

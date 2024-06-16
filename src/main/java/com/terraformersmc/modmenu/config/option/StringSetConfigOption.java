@@ -1,8 +1,7 @@
 package com.terraformersmc.modmenu.config.option;
 
-import net.minecraft.text.Text;
-
 import com.terraformersmc.modmenu.util.TranslationUtil;
+import net.minecraft.text.Text;
 
 import java.util.Set;
 

@@ -6,9 +6,7 @@ import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.entries.ModListEntry;
-import com.terraformersmc.modmenu.util.VersionUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
-import com.terraformersmc.modmenu.util.mod.ModrinthUpdateInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -54,12 +52,14 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 	private final TextRenderer textRenderer;
 	private ModListEntry lastSelected = null;
 
-	public DescriptionListWidget(MinecraftClient client,
-								 int width,
-								 int height,
-								 int y,
-								 int itemHeight,
-								 ModsScreen parent) {
+	public DescriptionListWidget(
+		MinecraftClient client,
+		int width,
+		int height,
+		int y,
+		int itemHeight,
+		ModsScreen parent
+	) {
 		super(client, width, height, y, itemHeight);
 		this.parent = parent;
 		this.textRenderer = client.textRenderer;
@@ -127,22 +127,22 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 						}
 
 
-							Text updateMessage = updateInfo.getUpdateMessage();
-							String downloadLink = updateInfo.getDownloadLink();
-							if (updateMessage == null) {
-								updateMessage = DOWNLOAD_TEXT;
-							} else {
-								if (downloadLink != null) {
-									updateMessage = updateMessage.copy()
-										.formatted(Formatting.BLUE)
-										.formatted(Formatting.UNDERLINE);
-								}
+						Text updateMessage = updateInfo.getUpdateMessage();
+						String downloadLink = updateInfo.getDownloadLink();
+						if (updateMessage == null) {
+							updateMessage = DOWNLOAD_TEXT;
+						} else {
+							if (downloadLink != null) {
+								updateMessage = updateMessage.copy()
+									.formatted(Formatting.BLUE)
+									.formatted(Formatting.UNDERLINE);
 							}
-							for (OrderedText line : textRenderer.wrapLines(updateMessage, wrapWidth - 16)) {
-								if (downloadLink != null) {
-									children().add(new LinkEntry(line, downloadLink, 8));
-								} else {
-									children().add(new DescriptionEntry(line, 8));
+						}
+						for (OrderedText line : textRenderer.wrapLines(updateMessage, wrapWidth - 16)) {
+							if (downloadLink != null) {
+								children().add(new LinkEntry(line, downloadLink, 8));
+							} else {
+								children().add(new DescriptionEntry(line, 8));
 
 							}
 						}
@@ -183,8 +183,10 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 					links.forEach((key, value) -> {
 						int indent = 8;
 						for (OrderedText line : textRenderer.wrapLines(Text.translatable(key)
-							.formatted(Formatting.BLUE)
-							.formatted(Formatting.UNDERLINE), wrapWidth - 16)) {
+								.formatted(Formatting.BLUE)
+								.formatted(Formatting.UNDERLINE),
+							wrapWidth - 16
+						)) {
 							children().add(new LinkEntry(line, value, indent));
 							indent = 16;
 						}
@@ -234,7 +236,8 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 								var roleName = role.getKey();
 
 								for (var line : textRenderer.wrapLines(this.creditsRoleText(roleName),
-									wrapWidth - 16)) {
+									wrapWidth - 16
+								)) {
 									children().add(new DescriptionEntry(line, indent));
 									indent = 16;
 								}
@@ -262,17 +265,17 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 		BufferBuilder bufferBuilder;
 		BuiltBuffer builtBuffer;
 
-//		{
-//			RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
-//			RenderSystem.setShaderTexture(0, Screen.OPTIONS_BACKGROUND_TEXTURE);
-//			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-//			bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
-//			bufferBuilder.vertex(this.getX(), this.getBottom(), 0.0D).texture(this.getX() / 32.0F, (this.getBottom() + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255);
-//			bufferBuilder.vertex(this.getRight(), this.getBottom(), 0.0D).texture(this.getRight() / 32.0F, (this.getBottom() + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255);
-//			bufferBuilder.vertex(this.getRight(), this.getY(), 0.0D).texture(this.getRight() / 32.0F, (this.getY() + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255);
-//			bufferBuilder.vertex(this.getX(), this.getY(), 0.0D).texture(this.getX() / 32.0F, (this.getY() + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255);
-//			tessellator.draw();
-//		}
+		//		{
+		//			RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
+		//			RenderSystem.setShaderTexture(0, Screen.OPTIONS_BACKGROUND_TEXTURE);
+		//			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		//			bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
+		//			bufferBuilder.vertex(this.getX(), this.getBottom(), 0.0D).texture(this.getX() / 32.0F, (this.getBottom() + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255);
+		//			bufferBuilder.vertex(this.getRight(), this.getBottom(), 0.0D).texture(this.getRight() / 32.0F, (this.getBottom() + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255);
+		//			bufferBuilder.vertex(this.getRight(), this.getY(), 0.0D).texture(this.getRight() / 32.0F, (this.getY() + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255);
+		//			bufferBuilder.vertex(this.getX(), this.getY(), 0.0D).texture(this.getX() / 32.0F, (this.getY() + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255);
+		//			tessellator.draw();
+		//		}
 
 		this.enableScissor(DrawContext);
 		super.renderList(DrawContext, mouseX, mouseY, delta);
@@ -284,7 +287,8 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 		RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA,
 			GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA,
 			GlStateManager.SrcFactor.ZERO,
-			GlStateManager.DstFactor.ONE);
+			GlStateManager.DstFactor.ONE
+		);
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 
 		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
@@ -372,7 +376,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 	private Text creditsRoleText(String roleName) {
 		// Replace spaces and dashes in role names with underscores if they exist
 		// Notably Quilted Fabric API does this with FabricMC as "Upstream Owner"
-		var translationKey = roleName.replaceAll("[\s-]", "_").toLowerCase();
+		var translationKey = roleName.replaceAll("[ -]", "_").toLowerCase();
 
 		// Add an s to the default untranslated string if it ends in r since this
 		// Fixes common role names people use in English (e.g. Author -> Authors)
@@ -402,16 +406,18 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 		}
 
 		@Override
-		public void render(DrawContext DrawContext,
-						   int index,
-						   int y,
-						   int x,
-						   int itemWidth,
-						   int itemHeight,
-						   int mouseX,
-						   int mouseY,
-						   boolean isSelected,
-						   float delta) {
+		public void render(
+			DrawContext DrawContext,
+			int index,
+			int y,
+			int x,
+			int itemWidth,
+			int itemHeight,
+			int mouseX,
+			int mouseY,
+			boolean isSelected,
+			float delta
+		) {
 			if (updateTextEntry) {
 				UpdateAvailableBadge.renderBadge(DrawContext, x + indent, y);
 				x += 11;

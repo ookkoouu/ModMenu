@@ -6,8 +6,8 @@ import net.minecraft.client.gui.DrawContext;
 import org.lwjgl.glfw.GLFW;
 
 public class ChildEntry extends ModListEntry {
-	private boolean bottomChild;
-	private ParentEntry parent;
+	private final boolean bottomChild;
+	private final ParentEntry parent;
 
 	public ChildEntry(Mod mod, ParentEntry parent, ModListWidget list, boolean bottomChild) {
 		super(mod, list);
@@ -16,7 +16,18 @@ public class ChildEntry extends ModListEntry {
 	}
 
 	@Override
-	public void render(DrawContext DrawContext, int index, int y, int x, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
+	public void render(
+		DrawContext DrawContext,
+		int index,
+		int y,
+		int x,
+		int rowWidth,
+		int rowHeight,
+		int mouseX,
+		int mouseY,
+		boolean isSelected,
+		float delta
+	) {
 		super.render(DrawContext, index, y, x, rowWidth, rowHeight, mouseX, mouseY, isSelected, delta);
 		x += 4;
 		int color = 0xFFA0A0A0;

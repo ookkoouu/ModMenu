@@ -127,7 +127,8 @@ public class UpdateCheckerUtil {
 					LOGGER.info("Update available for '{}@{}', (-> {})",
 						mod.getId(),
 						mod.getVersion(),
-						data.versionNumber);
+						data.versionNumber
+					);
 				}
 			}
 		}
@@ -151,15 +152,13 @@ public class UpdateCheckerUtil {
 				LOGGER.error("Error getting mod hash for mod {}: ", modId, e);
 			}
 		}
-		;
 
 		return results;
 	}
 
 	public static void triggerV2DeprecatedToast() {
 		if (modrinthApiV2Deprecated && ModMenuConfig.UPDATE_CHECKER.getValue()) {
-			MinecraftClient.getInstance().getToastManager().add(new SystemToast(
-				SystemToast.Type.PERIODIC_NOTIFICATION,
+			MinecraftClient.getInstance().getToastManager().add(new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
 				Text.translatable("modmenu.modrinth.v2_deprecated.title"),
 				Text.translatable("modmenu.modrinth.v2_deprecated.description")
 			));
@@ -244,7 +243,8 @@ public class UpdateCheckerUtil {
 		String body = ModMenu.GSON_MINIFIED.toJson(new LatestVersionsFromHashesBody(modHashes,
 			loaders,
 			mcVer,
-			updateChannels));
+			updateChannels
+		));
 
 		LOGGER.debug("Body: {}", body);
 		var latestVersionsRequest = HttpRequest.newBuilder()
@@ -270,8 +270,12 @@ public class UpdateCheckerUtil {
 					var versionType = versionObj.get("version_type").getAsString();
 					var versionNumber = versionObj.get("version_number").getAsString();
 					var versionId = versionObj.get("id").getAsString();
-					var primaryFile = versionObj.get("files").getAsJsonArray().asList().stream()
-						.filter(file -> file.getAsJsonObject().get("primary").getAsBoolean()).findFirst();
+					var primaryFile = versionObj.get("files")
+						.getAsJsonArray()
+						.asList()
+						.stream()
+						.filter(file -> file.getAsJsonObject().get("primary").getAsBoolean())
+						.findFirst();
 
 					if (primaryFile.isEmpty()) {
 						return;
@@ -294,7 +298,8 @@ public class UpdateCheckerUtil {
 						.getAsString();
 
 					results.put(lookupHash,
-						new VersionUpdate(projectId, versionId, versionNumber, date, updateChannel, versionHash));
+						new VersionUpdate(projectId, versionId, versionNumber, date, updateChannel, versionHash)
+					);
 				});
 
 				return results;
@@ -328,10 +333,12 @@ public class UpdateCheckerUtil {
 		@SerializedName("version_types")
 		public Collection<String> versionTypes;
 
-		public LatestVersionsFromHashesBody(Collection<String> hashes,
-											Collection<String> loaders,
-											String mcVersion,
-											Collection<UpdateChannel> updateChannels) {
+		public LatestVersionsFromHashesBody(
+			Collection<String> hashes,
+			Collection<String> loaders,
+			String mcVersion,
+			Collection<UpdateChannel> updateChannels
+		) {
 			this.hashes = hashes;
 			this.loaders = loaders;
 			this.gameVersions = Set.of(mcVersion);

@@ -30,13 +30,26 @@ public class ParentEntry extends ModListEntry {
 	}
 
 	@Override
-	public void render(DrawContext DrawContext, int index, int y, int x, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
+	public void render(
+		DrawContext DrawContext,
+		int index,
+		int y,
+		int x,
+		int rowWidth,
+		int rowHeight,
+		int mouseX,
+		int mouseY,
+		boolean isSelected,
+		float delta
+	) {
 		super.render(DrawContext, index, y, x, rowWidth, rowHeight, mouseX, mouseY, isSelected, delta);
 		TextRenderer font = client.textRenderer;
 		int childrenBadgeHeight = font.fontHeight;
 		int childrenBadgeWidth = font.fontHeight;
 		int shownChildren = ModSearch.search(list.getParent(), list.getParent().getSearchInput(), getChildren()).size();
-		Text str = shownChildren == children.size() ? Text.literal(String.valueOf(shownChildren)) : Text.literal(shownChildren + "/" + children.size());
+		Text str = shownChildren == children.size() ?
+			Text.literal(String.valueOf(shownChildren)) :
+			Text.literal(shownChildren + "/" + children.size());
 		int childrenWidth = font.getWidth(str) - 1;
 		if (childrenBadgeWidth < childrenWidth + 4) {
 			childrenBadgeWidth = childrenWidth + 4;
@@ -46,19 +59,63 @@ public class ParentEntry extends ModListEntry {
 		int childrenBadgeY = y + iconSize - childrenBadgeHeight;
 		int childrenOutlineColor = 0xff107454;
 		int childrenFillColor = 0xff093929;
-		DrawContext.fill(childrenBadgeX + 1, childrenBadgeY, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + 1, childrenOutlineColor);
-		DrawContext.fill( childrenBadgeX, childrenBadgeY + 1, childrenBadgeX + 1, childrenBadgeY + childrenBadgeHeight - 1, childrenOutlineColor);
-		DrawContext.fill( childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth, childrenBadgeY + childrenBadgeHeight - 1, childrenOutlineColor);
-		DrawContext.fill( childrenBadgeX + 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight - 1, childrenFillColor);
-		DrawContext.fill( childrenBadgeX + 1, childrenBadgeY + childrenBadgeHeight - 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight, childrenOutlineColor);
-		DrawContext.drawText(font, str.asOrderedText(), (int) (childrenBadgeX + (float) childrenBadgeWidth / 2 - (float) childrenWidth / 2), childrenBadgeY + 1, 0xCACACA, false);
+		DrawContext.fill(childrenBadgeX + 1,
+			childrenBadgeY,
+			childrenBadgeX + childrenBadgeWidth - 1,
+			childrenBadgeY + 1,
+			childrenOutlineColor
+		);
+		DrawContext.fill(childrenBadgeX,
+			childrenBadgeY + 1,
+			childrenBadgeX + 1,
+			childrenBadgeY + childrenBadgeHeight - 1,
+			childrenOutlineColor
+		);
+		DrawContext.fill(childrenBadgeX + childrenBadgeWidth - 1,
+			childrenBadgeY + 1,
+			childrenBadgeX + childrenBadgeWidth,
+			childrenBadgeY + childrenBadgeHeight - 1,
+			childrenOutlineColor
+		);
+		DrawContext.fill(childrenBadgeX + 1,
+			childrenBadgeY + 1,
+			childrenBadgeX + childrenBadgeWidth - 1,
+			childrenBadgeY + childrenBadgeHeight - 1,
+			childrenFillColor
+		);
+		DrawContext.fill(childrenBadgeX + 1,
+			childrenBadgeY + childrenBadgeHeight - 1,
+			childrenBadgeX + childrenBadgeWidth - 1,
+			childrenBadgeY + childrenBadgeHeight,
+			childrenOutlineColor
+		);
+		DrawContext.drawText(font,
+			str.asOrderedText(),
+			(int) (childrenBadgeX + (float) childrenBadgeWidth / 2 - (float) childrenWidth / 2),
+			childrenBadgeY + 1,
+			0xCACACA,
+			false
+		);
 		this.hoveringIcon = mouseX >= x - 1 && mouseX <= x - 1 + iconSize && mouseY >= y - 1 && mouseY <= y - 1 + iconSize;
 		if (isMouseOver(mouseX, mouseY)) {
 			DrawContext.fill(x, y, x + iconSize, y + iconSize, 0xA0909090);
 			int xOffset = list.getParent().showModChildren.contains(getMod().getId()) ? iconSize : 0;
 			int yOffset = hoveringIcon ? iconSize : 0;
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-			DrawContext.drawTexture(PARENT_MOD_TEXTURE, x, y, xOffset, yOffset, iconSize + xOffset, iconSize + yOffset, ModMenuConfig.COMPACT_LIST.getValue() ? (int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) : 256, ModMenuConfig.COMPACT_LIST.getValue() ? (int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) : 256);
+			DrawContext.drawTexture(PARENT_MOD_TEXTURE,
+				x,
+				y,
+				xOffset,
+				yOffset,
+				iconSize + xOffset,
+				iconSize + yOffset,
+				ModMenuConfig.COMPACT_LIST.getValue() ?
+					(int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) :
+					256,
+				ModMenuConfig.COMPACT_LIST.getValue() ?
+					(int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) :
+					256
+			);
 		}
 	}
 
