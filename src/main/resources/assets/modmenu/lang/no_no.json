@@ -143,8 +143,6 @@
   "option.modmenu.mods_button_style.shrink": "Ved siden av",
   "option.modmenu.mods_button_style.icon": "Ikon",
   "option.modmenu.game_menu_button_style": "Spillmeny",
-  "option.modmenu.game_menu_button_style.below_bugs": "Under feilmeldinger",
-  "option.modmenu.game_menu_button_style.replace_bugs": "Erstatt feilmeldinger",
   "option.modmenu.game_menu_button_style.icon": "Ikon",
   "option.modmenu.random_java_colors": "Java Farge",
   "option.modmenu.random_java_colors.true": "Leverandør",

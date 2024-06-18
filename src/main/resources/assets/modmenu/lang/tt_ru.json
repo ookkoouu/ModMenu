@@ -152,8 +152,6 @@
   "option.modmenu.mods_button_style.shrink": "[Realms] уңда",
   "option.modmenu.mods_button_style.icon": "Тамгачык",
   "option.modmenu.game_menu_button_style": "Менюда",
-  "option.modmenu.game_menu_button_style.below_bugs": "Хаталар астына",
-  "option.modmenu.game_menu_button_style.replace_bugs": "Хаталар алыштыру",
   "option.modmenu.game_menu_button_style.icon": "Тамгачык",
   "option.modmenu.random_java_colors": "Java төсе",
   "option.modmenu.random_java_colors.true": "Җитештерүчедән",

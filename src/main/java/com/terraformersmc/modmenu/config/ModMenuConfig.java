@@ -1,5 +1,6 @@
 package com.terraformersmc.modmenu.config;
 
+import com.google.gson.annotations.SerializedName;
 import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.config.option.BooleanConfigOption;
 import com.terraformersmc.modmenu.config.option.EnumConfigOption;
@@ -20,17 +21,14 @@ public class ModMenuConfig {
 	public static final BooleanConfigOption COUNT_LIBRARIES = new BooleanConfigOption("count_libraries", true);
 	public static final BooleanConfigOption COMPACT_LIST = new BooleanConfigOption("compact_list", false);
 	public static final BooleanConfigOption COUNT_CHILDREN = new BooleanConfigOption("count_children", true);
-	public static final EnumConfigOption<TitleMenuButtonStyle> MODS_BUTTON_STYLE = new EnumConfigOption<>(
-		"mods_button_style",
+	public static final EnumConfigOption<TitleMenuButtonStyle> MODS_BUTTON_STYLE = new EnumConfigOption<>("mods_button_style",
 		TitleMenuButtonStyle.CLASSIC
 	);
-	public static final EnumConfigOption<GameMenuButtonStyle> GAME_MENU_BUTTON_STYLE = new EnumConfigOption<>(
-		"game_menu_button_style",
-		GameMenuButtonStyle.REPLACE_BUGS
+	public static final EnumConfigOption<GameMenuButtonStyle> GAME_MENU_BUTTON_STYLE = new EnumConfigOption<>("game_menu_button_style",
+		GameMenuButtonStyle.REPLACE
 	);
 	public static final BooleanConfigOption COUNT_HIDDEN_MODS = new BooleanConfigOption("count_hidden_mods", true);
-	public static final EnumConfigOption<ModCountLocation> MOD_COUNT_LOCATION = new EnumConfigOption<>(
-		"mod_count_location",
+	public static final EnumConfigOption<ModCountLocation> MOD_COUNT_LOCATION = new EnumConfigOption<>("mod_count_location",
 		ModCountLocation.TITLE_SCREEN
 	);
 	public static final BooleanConfigOption HIDE_MOD_LINKS = new BooleanConfigOption("hide_mod_links", false);
@@ -70,16 +68,16 @@ public class ModMenuConfig {
 		new HashSet<>()
 	);
 	@FileOnlyConfig
-	public static final StringSetConfigOption DISABLE_UPDATE_CHECKER = new StringSetConfigOption(
-		"disable_update_checker",
+	public static final StringSetConfigOption DISABLE_UPDATE_CHECKER = new StringSetConfigOption("disable_update_checker",
 		new HashSet<>()
 	);
 
 	public static SimpleOption<?>[] asOptions() {
 		ArrayList<SimpleOption<?>> options = new ArrayList<>();
 		for (Field field : ModMenuConfig.class.getDeclaredFields()) {
-			if (Modifier.isStatic(field.getModifiers()) && Modifier.isFinal(field.getModifiers()) && OptionConvertable.class.isAssignableFrom(
-				field.getType()) && !field.isAnnotationPresent(FileOnlyConfig.class)) {
+			if (Modifier.isStatic(field.getModifiers()) && Modifier.isFinal(field.getModifiers()) &&
+				OptionConvertable.class.isAssignableFrom(field.getType()) &&
+				!field.isAnnotationPresent(FileOnlyConfig.class)) {
 				try {
 					options.add(((OptionConvertable) field.get(null)).asOption());
 				} catch (IllegalAccessException e) {
@@ -131,6 +129,6 @@ public class ModMenuConfig {
 	}
 
 	public enum GameMenuButtonStyle {
-		REPLACE_BUGS, BELOW_BUGS, ICON
+		@SerializedName(value = "replace", alternate = { "replace_bugs" }) REPLACE, @SerializedName(value = "insert", alternate = { "below_bugs" }) INSERT, ICON
 	}
 }

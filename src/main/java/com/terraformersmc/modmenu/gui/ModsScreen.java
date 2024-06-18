@@ -15,6 +15,7 @@ import com.terraformersmc.modmenu.util.TranslationUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.ModBadgeRenderer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.ConfirmScreen;
@@ -28,10 +29,7 @@ import net.minecraft.client.toast.SystemToast;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Language;
-import net.minecraft.util.Util;
+import net.minecraft.util.*;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +81,9 @@ public class ModsScreen extends Screen {
 	public final Map<String, Boolean> modHasConfigScreen = new HashMap<>();
 	public final Map<String, Throwable> modScreenErrors = new HashMap<>();
 
+	private static final Text SEND_FEEDBACK_TEXT = Text.translatable("menu.sendFeedback");
+	private static final Text REPORT_BUGS_TEXT = Text.translatable("menu.reportBugs");
+
 	public ModsScreen(Screen previousScreen) {
 		super(ModMenuScreenTexts.TITLE);
 		this.previousScreen = previousScreen;
@@ -108,7 +109,9 @@ public class ModsScreen extends Screen {
 					Screen configScreen = ModMenu.getConfigScreen(id, this);
 					modHasConfigScreen.put(id, configScreen != null);
 				} catch (java.lang.NoClassDefFoundError e) {
-					LOGGER.warn("The '" + id + "' mod config screen is not available because " + e.getLocalizedMessage() + " is missing.");
+					LOGGER.warn(
+						"The '" + id + "' mod config screen is not available because " + e.getLocalizedMessage() +
+							" is missing.");
 					modScreenErrors.put(id, e);
 					modHasConfigScreen.put(id, false);
 				} catch (Throwable e) {
@@ -166,8 +169,7 @@ public class ModsScreen extends Screen {
 		this.updateFiltersX();
 
 		if (!ModMenuConfig.CONFIG_MODE.getValue()) {
-			this.filtersButton = LegacyTexturedButtonWidget.legacyTexturedBuilder(
-					ModMenuScreenTexts.TOGGLE_FILTER_OPTIONS,
+			this.filtersButton = LegacyTexturedButtonWidget.legacyTexturedBuilder(ModMenuScreenTexts.TOGGLE_FILTER_OPTIONS,
 					button -> {
 						this.setFilterOptionsShown(!this.filterOptionsShown);
 					}
@@ -221,12 +223,15 @@ public class ModsScreen extends Screen {
 
 		this.websiteButton = ButtonWidget.builder(ModMenuScreenTexts.WEBSITE, button -> {
 				final Mod mod = Objects.requireNonNull(selected).getMod();
-				this.client.setScreen(new ConfirmLinkScreen(confirmed -> {
-					if (confirmed) {
-						Util.getOperatingSystem().open(mod.getWebsite());
-					}
-					this.client.setScreen(this);
-				}, mod.getWebsite(), false));
+				boolean isMinecraft = selected.getMod().getId().equals("minecraft");
+
+				if (isMinecraft) {
+					var url = SharedConstants.getGameVersion().isStable() ? Urls.JAVA_FEEDBACK : Urls.SNAPSHOT_FEEDBACK;
+					ConfirmLinkScreen.open(this, url, true);
+				} else {
+					var url = mod.getWebsite();
+					ConfirmLinkScreen.open(this, url, false);
+				}
 			})
 			.position(this.rightPaneX + (urlButtonWidths / 2) - (cappedButtonWidth / 2), RIGHT_PANE_Y + 36)
 			.size(Math.min(urlButtonWidths, 200), 20)
@@ -235,12 +240,14 @@ public class ModsScreen extends Screen {
 		// Issues button
 		this.issuesButton = ButtonWidget.builder(ModMenuScreenTexts.ISSUES, button -> {
 				final Mod mod = Objects.requireNonNull(selected).getMod();
-				this.client.setScreen(new ConfirmLinkScreen(confirmed -> {
-					if (confirmed) {
-						Util.getOperatingSystem().open(mod.getIssueTracker());
-					}
-					this.client.setScreen(this);
-				}, mod.getIssueTracker(), false));
+				boolean isMinecraft = selected.getMod().getId().equals("minecraft");
+
+				if (isMinecraft) {
+					ConfirmLinkScreen.open(this, Urls.SNAPSHOT_BUGS, true);
+				} else {
+					var url = mod.getIssueTracker();
+					ConfirmLinkScreen.open(this, url, false);
+				}
 			})
 			.position(this.rightPaneX + urlButtonWidths + 4 + (urlButtonWidths / 2) - (cappedButtonWidth / 2),
 				RIGHT_PANE_Y + 36
@@ -300,10 +307,8 @@ public class ModsScreen extends Screen {
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		return super.keyPressed(keyCode, scanCode, modifiers) || this.searchBox.keyPressed(keyCode,
-			scanCode,
-			modifiers
-		);
+		return super.keyPressed(keyCode, scanCode, modifiers) ||
+			this.searchBox.keyPressed(keyCode, scanCode, modifiers);
 	}
 
 	@Override
@@ -340,7 +345,8 @@ public class ModsScreen extends Screen {
 			Text fullModCount = this.computeModCountText(true);
 			if (!ModMenuConfig.CONFIG_MODE.getValue() && this.updateFiltersX()) {
 				if (this.filterOptionsShown) {
-					if (!ModMenuConfig.SHOW_LIBRARIES.getValue() || textRenderer.getWidth(fullModCount) <= this.filtersX - 5) {
+					if (!ModMenuConfig.SHOW_LIBRARIES.getValue() ||
+						textRenderer.getWidth(fullModCount) <= this.filtersX - 5) {
 						DrawContext.drawText(textRenderer,
 							fullModCount.asOrderedText(),
 							this.searchBoxX,
@@ -365,7 +371,8 @@ public class ModsScreen extends Screen {
 						);
 					}
 				} else {
-					if (!ModMenuConfig.SHOW_LIBRARIES.getValue() || textRenderer.getWidth(fullModCount) <= modList.getWidth() - 5) {
+					if (!ModMenuConfig.SHOW_LIBRARIES.getValue() ||
+						textRenderer.getWidth(fullModCount) <= modList.getWidth() - 5) {
 						DrawContext.drawText(textRenderer,
 							fullModCount.asOrderedText(),
 							this.searchBoxX,
@@ -409,8 +416,7 @@ public class ModsScreen extends Screen {
 			int maxNameWidth = this.width - (x + imageOffset);
 			if (textRenderer.getWidth(name) > maxNameWidth) {
 				StringVisitable ellipsis = StringVisitable.plain("...");
-				trimmedName = StringVisitable.concat(textRenderer.trimToWidth(
-					name,
+				trimmedName = StringVisitable.concat(textRenderer.trimToWidth(name,
 					maxNameWidth - textRenderer.getWidth(ellipsis)
 				), ellipsis);
 			}
@@ -421,12 +427,14 @@ public class ModsScreen extends Screen {
 				0xFFFFFF,
 				true
 			);
-			if (mouseX > x + imageOffset && mouseY > RIGHT_PANE_Y + 1 && mouseY < RIGHT_PANE_Y + 1 + textRenderer.fontHeight && mouseX < x + imageOffset + textRenderer.getWidth(
-				trimmedName)) {
+			if (mouseX > x + imageOffset && mouseY > RIGHT_PANE_Y + 1 &&
+				mouseY < RIGHT_PANE_Y + 1 + textRenderer.fontHeight &&
+				mouseX < x + imageOffset + textRenderer.getWidth(trimmedName)) {
 				this.setTooltip(ModMenuScreenTexts.modIdTooltip(mod.getId()));
 			}
 			if (this.init || modBadgeRenderer == null || modBadgeRenderer.getMod() != mod) {
-				modBadgeRenderer = new ModBadgeRenderer(x + imageOffset + this.client.textRenderer.getWidth(trimmedName) + 2,
+				modBadgeRenderer = new ModBadgeRenderer(
+					x + imageOffset + this.client.textRenderer.getWidth(trimmedName) + 2,
 					RIGHT_PANE_Y,
 					width - 28,
 					selectedEntry.mod,
@@ -528,13 +536,13 @@ public class ModsScreen extends Screen {
 	public void updateSelectedEntry(ModListEntry entry) {
 		if (entry != null) {
 			this.selected = entry;
+			String modId = selected.getMod().getId();
 
 			if (this.configureButton != null) {
-				String modId = selected.getMod().getId();
 
 				this.configureButton.active = modHasConfigScreen.get(modId);
-				this.configureButton.visible = selected != null && modHasConfigScreen.get(modId) || modScreenErrors.containsKey(
-					modId);
+				this.configureButton.visible =
+					selected != null && modHasConfigScreen.get(modId) || modScreenErrors.containsKey(modId);
 
 				if (modScreenErrors.containsKey(modId)) {
 					Throwable e = modScreenErrors.get(modId);
@@ -544,11 +552,21 @@ public class ModsScreen extends Screen {
 				}
 			}
 
+			var isMinecraft = modId.equals("minecraft");
+
+			if (isMinecraft) {
+				this.websiteButton.setMessage(SEND_FEEDBACK_TEXT);
+				this.issuesButton.setMessage(REPORT_BUGS_TEXT);
+			} else {
+				this.websiteButton.setMessage(ModMenuScreenTexts.WEBSITE);
+				this.issuesButton.setMessage(ModMenuScreenTexts.ISSUES);
+			}
+
 			this.websiteButton.visible = true;
-			this.websiteButton.active = selected.getMod().getWebsite() != null;
+			this.websiteButton.active = isMinecraft || selected.getMod().getWebsite() != null;
 
 			this.issuesButton.visible = true;
-			this.issuesButton.active = selected.getMod().getIssueTracker() != null;
+			this.issuesButton.active = isMinecraft || selected.getMod().getIssueTracker() != null;
 		}
 	}
 
@@ -565,8 +583,10 @@ public class ModsScreen extends Screen {
 	}
 
 	private boolean updateFiltersX() {
-		if ((this.filtersWidth + textRenderer.getWidth(this.computeModCountText(true)) + 20) >= this.searchRowWidth && ((this.filtersWidth + textRenderer.getWidth(
-			computeModCountText(false)) + 20) >= this.searchRowWidth || (this.filtersWidth + textRenderer.getWidth(this.computeLibraryCountText()) + 20) >= this.searchRowWidth)) {
+		if ((this.filtersWidth + textRenderer.getWidth(this.computeModCountText(true)) + 20) >= this.searchRowWidth &&
+			((this.filtersWidth + textRenderer.getWidth(computeModCountText(false)) + 20) >= this.searchRowWidth ||
+				(this.filtersWidth + textRenderer.getWidth(this.computeLibraryCountText()) + 20) >= this.searchRowWidth
+			)) {
 			this.filtersX = this.paneWidth / 2 - this.filtersWidth / 2;
 			return !filterOptionsShown;
 		} else {

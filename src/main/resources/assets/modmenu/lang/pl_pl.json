@@ -152,8 +152,6 @@
   "option.modmenu.mods_button_style.shrink": "Obok Realms",
   "option.modmenu.mods_button_style.icon": "Ikonka",
   "option.modmenu.game_menu_button_style": "W menu gry",
-  "option.modmenu.game_menu_button_style.below_bugs": "Poniżej błędów",
-  "option.modmenu.game_menu_button_style.replace_bugs": "Zastąp błędy",
   "option.modmenu.game_menu_button_style.icon": "Ikonka",
   "option.modmenu.random_java_colors": "Kolor Javy",
   "option.modmenu.random_java_colors.true": "Dostawca",

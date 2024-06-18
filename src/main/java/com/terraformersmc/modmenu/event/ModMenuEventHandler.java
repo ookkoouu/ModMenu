@@ -27,9 +27,7 @@ import net.minecraft.util.Identifier;
 import java.util.List;
 
 public class ModMenuEventHandler {
-	public static final Identifier FABRIC_ICON_BUTTON_LOCATION = Identifier.of(ModMenu.MOD_ID,
-		"textures/gui/mods_button.png"
-	);
+	public static final Identifier MODS_BUTTON_TEXTURE = Identifier.of(ModMenu.MOD_ID, "textures/gui/mods_button.png");
 	private static KeyBinding MENU_KEY_BIND;
 
 	public static void register() {
@@ -67,7 +65,8 @@ public class ModMenuEventHandler {
 						}
 					}
 					if (buttonHasText(button, "menu.online")) {
-						if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.REPLACE_REALMS) {
+						if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() ==
+							ModMenuConfig.TitleMenuButtonStyle.REPLACE_REALMS) {
 							buttons.set(i, new ModMenuButtonWidget(button.getX(),
 								button.getY(),
 								button.getWidth(),
@@ -76,7 +75,8 @@ public class ModMenuEventHandler {
 								screen
 							));
 						} else {
-							if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.SHRINK) {
+							if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() ==
+								ModMenuConfig.TitleMenuButtonStyle.SHRINK) {
 								button.setWidth(98);
 							}
 							modsButtonIndex = i + 1;
@@ -115,7 +115,7 @@ public class ModMenuEventHandler {
 						0,
 						0,
 						20,
-						FABRIC_ICON_BUTTON_LOCATION,
+						MODS_BUTTON_TEXTURE,
 						32,
 						64,
 						button -> MinecraftClient.getInstance().setScreen(new ModsScreen(screen)),
@@ -137,8 +137,8 @@ public class ModMenuEventHandler {
 		if (widget instanceof ButtonWidget button) {
 			Text text = button.getMessage();
 			TextContent textContent = text.getContent();
-			return textContent instanceof TranslatableTextContent && ((TranslatableTextContent) textContent).getKey()
-				.equals(translationKey);
+			return textContent instanceof TranslatableTextContent &&
+				((TranslatableTextContent) textContent).getKey().equals(translationKey);
 		}
 		return false;
 	}
@@ -146,8 +146,9 @@ public class ModMenuEventHandler {
 	public static void shiftButtons(Widget widget, boolean shiftUp, int spacing) {
 		if (shiftUp) {
 			widget.setY(widget.getY() - spacing / 2);
-		} else if (!(widget instanceof ClickableWidget button && button.getMessage()
-			.equals(Text.translatable("title.credits")))) {
+		} else if (!(widget instanceof ClickableWidget button &&
+			button.getMessage().equals(Text.translatable("title.credits"))
+		)) {
 			widget.setY(widget.getY() + spacing / 2);
 		}
 	}

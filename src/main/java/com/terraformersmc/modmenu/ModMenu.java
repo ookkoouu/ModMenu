@@ -206,7 +206,7 @@ public class ModMenu implements ClientModInitializer {
 			gameMenuStyle == ModMenuConfig.GameMenuButtonStyle.ICON;
 		var isShort = title ?
 			titleStyle == ModMenuConfig.TitleMenuButtonStyle.SHRINK :
-			gameMenuStyle == ModMenuConfig.GameMenuButtonStyle.REPLACE_BUGS;
+			gameMenuStyle == ModMenuConfig.GameMenuButtonStyle.REPLACE;
 		MutableText modsText = ModMenuScreenTexts.TITLE.copy();
 		if (ModMenuConfig.MOD_COUNT_LOCATION.getValue().isOnModsButton() && !isIcon) {
 			String count = ModMenu.getDisplayedModCount();
