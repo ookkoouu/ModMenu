@@ -24,6 +24,7 @@ import net.minecraft.text.TextContent;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ModMenuEventHandler {
@@ -133,12 +134,13 @@ public class ModMenuEventHandler {
 		}
 	}
 
-	public static boolean buttonHasText(Widget widget, String translationKey) {
+	public static boolean buttonHasText(Widget widget, String... translationKeys) {
 		if (widget instanceof ButtonWidget button) {
 			Text text = button.getMessage();
 			TextContent textContent = text.getContent();
-			return textContent instanceof TranslatableTextContent &&
-				((TranslatableTextContent) textContent).getKey().equals(translationKey);
+
+			return textContent instanceof TranslatableTextContent && Arrays.stream(translationKeys)
+				.anyMatch(s -> ((TranslatableTextContent) textContent).getKey().equals(s));
 		}
 		return false;
 	}

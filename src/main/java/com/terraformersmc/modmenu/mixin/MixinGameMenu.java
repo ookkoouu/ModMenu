@@ -43,7 +43,7 @@ public abstract class MixinGameMenu extends Screen {
 					Widget widget = buttons.get(i);
 					if (style == ModMenuConfig.GameMenuButtonStyle.INSERT) {
 						if (!(widget instanceof ClickableWidget button) || button.visible) {
-							ModMenuEventHandler.shiftButtons(widget, modsButtonIndex == -1 || ModMenuEventHandler.buttonHasText(widget, "menu.reportBugs"), spacing);
+							ModMenuEventHandler.shiftButtons(widget, modsButtonIndex == -1 || ModMenuEventHandler.buttonHasText(widget, "menu.reportBugs", "menu.server_links"), spacing);
 							if (modsButtonIndex == -1) {
 								buttonsY = widget.getY();
 							}
