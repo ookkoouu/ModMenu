@@ -3,7 +3,7 @@
   "key.modmenu.open_menu": "Mod Menuを開く",
   "modmenu.title": "Mods",
   "modmenu.nameTranslation.modmenu": "Mod Menu",
-  "modmenu.descriptionTranslation.modmenu": "インストール済みのMod一覧を表示するための Modメニューを追加します。",
+  "modmenu.descriptionTranslation.modmenu": "インストール済みのMod一覧を表示する Modメニューを追加します。",
   "modmenu.loaded": "(%s 導入済み)",
   "modmenu.loaded.short": "(%s)",
   "modmenu.loaded.69.secret": "(%s 導入済み...nice)",
